@@ -81,31 +81,40 @@ public class SocialSharing extends CordovaPlugin {
       callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
       return true;
     } else if (ACTION_SHARE_EVENT.equals(action)) {
-      return doSendIntent(callbackContext, args.getString(0), args.getString(1), args.getJSONArray(2), args.getString(3), null, null, false, true);
+      return doSendIntent(callbackContext, args.getString(0), args.getString(1), args.getJSONArray(2),
+          args.getString(3), null, null, false, true);
     } else if (ACTION_SHARE_WITH_OPTIONS_EVENT.equals(action)) {
       return shareWithOptions(callbackContext, args.getJSONObject(0));
     } else if (ACTION_SHARE_VIA_TWITTER_EVENT.equals(action)) {
-      return doSendIntent(callbackContext, args.getString(0), args.getString(1), args.getJSONArray(2), args.getString(3), "twitter", null, false, true);
+      return doSendIntent(callbackContext, args.getString(0), args.getString(1), args.getJSONArray(2),
+          args.getString(3), "twitter", null, false, true);
     } else if (ACTION_SHARE_VIA_FACEBOOK_EVENT.equals(action)) {
-      return doSendIntent(callbackContext, args.getString(0), args.getString(1), args.getJSONArray(2), args.getString(3), "com.facebook.katana", null, false, true, "com.facebook.composer.shareintent");
+      return doSendIntent(callbackContext, args.getString(0), args.getString(1), args.getJSONArray(2),
+          args.getString(3), "com.facebook.katana", null, false, true, "com.facebook.composer.shareintent");
     } else if (ACTION_SHARE_VIA_FACEBOOK_WITH_PASTEMESSAGEHINT.equals(action)) {
       this.pasteMessage = args.getString(4);
-      return doSendIntent(callbackContext, args.getString(0), args.getString(1), args.getJSONArray(2), args.getString(3), "com.facebook.katana", null, false, true, "com.facebook.composer.shareintent");
+      return doSendIntent(callbackContext, args.getString(0), args.getString(1), args.getJSONArray(2),
+          args.getString(3), "com.facebook.katana", null, false, true, "com.facebook.composer.shareintent");
     } else if (ACTION_SHARE_VIA_WHATSAPP_EVENT.equals(action)) {
       if (notEmpty(args.getString(4))) { // abid
-        return shareViaWhatsAppDirectly(callbackContext, args.getString(0), args.getString(1), args.getJSONArray(2), args.getString(3), args.getString(4));
+        return shareViaWhatsAppDirectly(callbackContext, args.getString(0), args.getString(1), args.getJSONArray(2),
+            args.getString(3), args.getString(4));
       } else if (notEmpty(args.getString(5))) { // phone
-        return shareViaWhatsAppDirectly(callbackContext, args.getString(0), args.getString(1), args.getJSONArray(2), args.getString(3), args.getString(5));
+        return shareViaWhatsAppDirectly(callbackContext, args.getString(0), args.getString(1), args.getJSONArray(2),
+            args.getString(3), args.getString(5));
       } else {
-        return doSendIntent(callbackContext, args.getString(0), args.getString(1), args.getJSONArray(2), args.getString(3), "whatsapp", null, false, true);
+        return doSendIntent(callbackContext, args.getString(0), args.getString(1), args.getJSONArray(2),
+            args.getString(3), "whatsapp", null, false, true);
       }
     } else if (ACTION_SHARE_VIA_INSTAGRAM_EVENT.equals(action)) {
       if (notEmpty(args.getString(0))) {
         copyHintToClipboard(args.getString(0), "Instagram paste message");
       }
-      return doSendIntent(callbackContext, args.getString(0), args.getString(1), args.getJSONArray(2), args.getString(3), "instagram", null, false, true);
+      return doSendIntent(callbackContext, args.getString(0), args.getString(1), args.getJSONArray(2),
+          args.getString(3), "instagram", null, false, true);
     } else if (ACTION_CAN_SHARE_VIA.equals(action)) {
-      return doSendIntent(callbackContext, args.getString(0), args.getString(1), args.getJSONArray(2), args.getString(3), args.getString(4), null, true, true);
+      return doSendIntent(callbackContext, args.getString(0), args.getString(1), args.getJSONArray(2),
+          args.getString(3), args.getString(4), null, true, true);
     } else if (ACTION_CAN_SHARE_VIA_EMAIL.equals(action)) {
       if (isEmailAvailable()) {
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
@@ -115,13 +124,17 @@ public class SocialSharing extends CordovaPlugin {
         return false;
       }
     } else if (ACTION_SHARE_VIA.equals(action)) {
-      return doSendIntent(callbackContext, args.getString(0), args.getString(1), args.getJSONArray(2), args.getString(3), args.getString(4), null, false, true);
+      return doSendIntent(callbackContext, args.getString(0), args.getString(1), args.getJSONArray(2),
+          args.getString(3), args.getString(4), null, false, true);
     } else if (ACTION_SHARE_VIA_SMS_EVENT.equals(action)) {
       return invokeSMSIntent(callbackContext, args.getJSONObject(0), args.getString(1));
     } else if (ACTION_SHARE_VIA_EMAIL_EVENT.equals(action)) {
-      return invokeEmailIntent(callbackContext, args.getString(0), args.getString(1), args.getJSONArray(2), args.isNull(3) ? null : args.getJSONArray(3), args.isNull(4) ? null : args.getJSONArray(4), args.isNull(5) ? null : args.getJSONArray(5));
+      return invokeEmailIntent(callbackContext, args.getString(0), args.getString(1), args.getJSONArray(2),
+          args.isNull(3) ? null : args.getJSONArray(3), args.isNull(4) ? null : args.getJSONArray(4),
+          args.isNull(5) ? null : args.getJSONArray(5));
     } else {
-      callbackContext.error("socialSharing." + action + " is not a supported function. Did you mean '" + ACTION_SHARE_EVENT + "'?");
+      callbackContext.error(
+          "socialSharing." + action + " is not a supported function. Did you mean '" + ACTION_SHARE_EVENT + "'?");
       return false;
     }
   }
@@ -131,7 +144,8 @@ public class SocialSharing extends CordovaPlugin {
     return cordova.getActivity().getPackageManager().queryIntentActivities(intent, 0).size() > 0;
   }
 
-  private boolean invokeEmailIntent(final CallbackContext callbackContext, final String message, final String subject, final JSONArray to, final JSONArray cc, final JSONArray bcc, final JSONArray files) throws JSONException {
+  private boolean invokeEmailIntent(final CallbackContext callbackContext, final String message, final String subject,
+      final JSONArray to, final JSONArray cc, final JSONArray bcc, final JSONArray files) throws JSONException {
 
     final SocialSharing plugin = this;
     cordova.getThreadPool().execute(new SocialSharingRunnable(callbackContext) {
@@ -166,7 +180,8 @@ public class SocialSharing extends CordovaPlugin {
               ArrayList<Uri> fileUris = new ArrayList<Uri>();
               for (int i = 0; i < files.length(); i++) {
                 Uri fileUri = getFileUriAndSetType(draft, dir, files.getString(i), subject, i);
-                fileUri = FileProvider.getUriForFile(webView.getContext(), cordova.getActivity().getPackageName()+".sharing.provider", new File(fileUri.getPath()));
+                fileUri = FileProvider.getUriForFile(webView.getContext(),
+                    cordova.getActivity().getPackageName() + ".sharing.provider", new File(fileUri.getPath()));
                 if (fileUri != null) {
                   fileUris.add(fileUri);
                 }
@@ -181,7 +196,8 @@ public class SocialSharing extends CordovaPlugin {
           return;
         }
 
-        // this was added to start the intent in a new window as suggested in #300 to prevent crashes upon return
+        // this was added to start the intent in a new window as suggested in #300 to
+        // prevent crashes upon return
         draft.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         draft.setData(Uri.parse("mailto:"));
@@ -194,10 +210,13 @@ public class SocialSharing extends CordovaPlugin {
           draft.setType("application/octet-stream");
 
           draft.setComponent(new ComponentName(info.activityInfo.packageName, info.activityInfo.name));
-          labeledIntentList.add(new LabeledIntent(draft, info.activityInfo.packageName, info.loadLabel(cordova.getActivity().getPackageManager()), info.icon));
+          labeledIntentList.add(new LabeledIntent(draft, info.activityInfo.packageName,
+              info.loadLabel(cordova.getActivity().getPackageManager()), info.icon));
         }
-        final Intent emailAppLists = Intent.createChooser(labeledIntentList.remove(labeledIntentList.size() - 1), "Choose Email App");
-        emailAppLists.putExtra(Intent.EXTRA_INITIAL_INTENTS, labeledIntentList.toArray(new LabeledIntent[labeledIntentList.size()]));
+        final Intent emailAppLists = Intent.createChooser(labeledIntentList.remove(labeledIntentList.size() - 1),
+            "Choose Email App");
+        emailAppLists.putExtra(Intent.EXTRA_INITIAL_INTENTS,
+            labeledIntentList.toArray(new LabeledIntent[labeledIntentList.size()]));
 
         // as an experiment for #300 we're explicitly running it on the ui thread here
         cordova.getActivity().runOnUiThread(new Runnable() {
@@ -224,43 +243,22 @@ public class SocialSharing extends CordovaPlugin {
   }
 
   private boolean shareWithOptions(CallbackContext callbackContext, JSONObject jsonObject) {
-    return doSendIntent(
-        callbackContext,
-        jsonObject.optString("message", null),
-        jsonObject.optString("subject", null),
+    return doSendIntent(callbackContext, jsonObject.optString("message", null), jsonObject.optString("subject", null),
         jsonObject.optJSONArray("files") == null ? new JSONArray() : jsonObject.optJSONArray("files"),
-        jsonObject.optString("url", null),
-        jsonObject.optString("appPackageName", null),
-        jsonObject.optString("chooserTitle", null),
-        false,
-        false
-    );
+        jsonObject.optString("url", null), jsonObject.optString("appPackageName", null),
+        jsonObject.optString("chooserTitle", null), false, false);
   }
 
-  private boolean doSendIntent(
-      final CallbackContext callbackContext,
-      final String msg,
-      final String subject,
-      final JSONArray files,
-      final String url,
-      final String appPackageName,
-      final String chooserTitle,
-      final boolean peek,
-      final boolean boolResult) {
-    return doSendIntent(callbackContext, msg, subject, files, url, appPackageName, chooserTitle, peek, boolResult, null);
+  private boolean doSendIntent(final CallbackContext callbackContext, final String msg, final String subject,
+      final JSONArray files, final String url, final String appPackageName, final String chooserTitle,
+      final boolean peek, final boolean boolResult) {
+    return doSendIntent(callbackContext, msg, subject, files, url, appPackageName, chooserTitle, peek, boolResult,
+        null);
   }
 
-  private boolean doSendIntent(
-      final CallbackContext callbackContext,
-      final String msg,
-      final String subject,
-      final JSONArray files,
-      final String url,
-      final String appPackageName,
-      final String chooserTitle,
-      final boolean peek,
-      final boolean boolResult,
-      final String appName) {
+  private boolean doSendIntent(final CallbackContext callbackContext, final String msg, final String subject,
+      final JSONArray files, final String url, final String appPackageName, final String chooserTitle,
+      final boolean peek, final boolean boolResult, final String appName) {
 
     final CordovaInterface mycordova = cordova;
     final CordovaPlugin plugin = this;
@@ -270,8 +268,10 @@ public class SocialSharing extends CordovaPlugin {
         String message = msg;
         final boolean hasMultipleAttachments = files.length() > 1;
         final Intent sendIntent = new Intent(hasMultipleAttachments ? Intent.ACTION_SEND_MULTIPLE : Intent.ACTION_SEND);
-        final Intent receiverIntent = new Intent(cordova.getActivity().getApplicationContext(), ShareChooserPendingIntent.class);
-        final PendingIntent pendingIntent = PendingIntent.getBroadcast(cordova.getActivity().getApplicationContext(), 0, receiverIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        final Intent receiverIntent = new Intent(cordova.getActivity().getApplicationContext(),
+            ShareChooserPendingIntent.class);
+        final PendingIntent pendingIntent = PendingIntent.getBroadcast(cordova.getActivity().getApplicationContext(), 0,
+            receiverIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         sendIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
 
         try {
@@ -282,7 +282,8 @@ public class SocialSharing extends CordovaPlugin {
               Uri fileUri = null;
               for (int i = 0; i < files.length(); i++) {
                 fileUri = getFileUriAndSetType(sendIntent, dir, files.getString(i), subject, i);
-                fileUri = FileProvider.getUriForFile(webView.getContext(), cordova.getActivity().getPackageName()+".sharing.provider", new File(fileUri.getPath()));
+                fileUri = FileProvider.getUriForFile(webView.getContext(),
+                    cordova.getActivity().getPackageName() + ".sharing.provider", new File(fileUri.getPath()));
                 fileUris.add(fileUri);
               }
               if (!fileUris.isEmpty()) {
@@ -322,7 +323,8 @@ public class SocialSharing extends CordovaPlugin {
           }
         }
 
-        // this was added to start the intent in a new window as suggested in #300 to prevent crashes upon return
+        // this was added to start the intent in a new window as suggested in #300 to
+        // prevent crashes upon return
         sendIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         if (appPackageName != null) {
@@ -350,7 +352,8 @@ public class SocialSharing extends CordovaPlugin {
               });
 
               if (pasteMessage != null) {
-                // add a little delay because target app (facebook only atm) needs to be started first
+                // add a little delay because target app (facebook only atm) needs to be started
+                // first
                 new Timer().schedule(new TimerTask() {
                   public void run() {
                     cordova.getActivity().runOnUiThread(new Runnable() {
@@ -372,9 +375,22 @@ public class SocialSharing extends CordovaPlugin {
             // as an experiment for #300 we're explicitly running it on the ui thread here
             cordova.getActivity().runOnUiThread(new Runnable() {
               public void run() {
-                Intent sendIntent = findTwitterClient();
-                sendIntent.putExtra(Intent.EXTRA_TEXT, "test");
-                mycordova.startActivityForResult(plugin, (Intent.createChooser(sendIntent, chooserTitle)), boolResult ? ACTIVITY_CODE_SEND__BOOLRESULT : ACTIVITY_CODE_SEND__OBJECT);
+                List<Intent> targets = new ArrayList<>();
+                Intent template = new Intent(Intent.ACTION_SEND_MULTIPLE);
+                List<ResolveInfo> candidates = getActivity().getPackageManager().queryIntentActivities(template, 0);
+                // remove facebook which has a broken share intent
+                for (ResolveInfo candidate : candidates) {
+                  String packageName = candidate.activityInfo.packageName;
+                  if (!packageName.equals("com.facebook.katana") || !packageName.equals("com.whatsapp")
+                      || !packageName.equals("org.telegram.messenger")) {
+                    Intent target = new Intent(Intent.ACTION_SEND_MULTIPLE);
+                    target.setPackage(packageName);
+                    targets.add(target);
+                  }
+                }
+                Intent send = Intent.createChooser(targets.remove(0), chooserTitle);
+                mycordova.startActivityForResult(plugin, send,
+                    boolResult ? ACTIVITY_CODE_SEND__BOOLRESULT : ACTIVITY_CODE_SEND__OBJECT);
               }
             });
           }
@@ -383,36 +399,19 @@ public class SocialSharing extends CordovaPlugin {
     });
     return true;
   }
-  
-  public Intent findTwitterClient() {
-    final String[] twitterApps = {
-            "com.google.android.gm",
-            "com.google.android.apps.docs",
-            "com.whatsapp"};
-    Intent tweetIntent = new Intent();
-    tweetIntent.setType("text/plain");
-    final PackageManager packageManager = cordova.getActivity().getPackageManager();
-    List<ResolveInfo> list = cordova.getActivity().getPackageManager().queryIntentActivities(
-            tweetIntent, PackageManager.MATCH_DEFAULT_ONLY);
-    for (int i = 0; i < twitterApps.length; i++) {
-        for (ResolveInfo resolveInfo : list) {
-            String p = resolveInfo.activityInfo.packageName;
-            if (p != null && p.startsWith(twitterApps[i])) {
-                tweetIntent.setPackage(p);
-                return tweetIntent;
-            }
-        }
-    }
 
-    return null;
-}
+  public Intent findTwitterClient() {
+
+    return targets;
+  }
 
   @SuppressLint("NewApi")
   private void copyHintToClipboard(String msg, String label) {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
       return;
     }
-    final ClipboardManager clipboard = (android.content.ClipboardManager) cordova.getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+    final ClipboardManager clipboard = (android.content.ClipboardManager) cordova.getActivity()
+        .getSystemService(Context.CLIPBOARD_SERVICE);
     final ClipData clip = android.content.ClipData.newPlainText(label, msg);
     clipboard.setPrimaryClip(clip);
   }
@@ -427,10 +426,11 @@ public class SocialSharing extends CordovaPlugin {
     toast.show();
   }
 
-  private Uri getFileUriAndSetType(Intent sendIntent, String dir, String image, String subject, int nthFile) throws IOException {
+  private Uri getFileUriAndSetType(Intent sendIntent, String dir, String image, String subject, int nthFile)
+      throws IOException {
     // we're assuming an image, but this can be any filetype you like
     String localImage = image;
-    if (image.endsWith("mp4") || image.endsWith("mov") || image.endsWith("3gp")){
+    if (image.endsWith("mp4") || image.endsWith("mov") || image.endsWith("3gp")) {
       sendIntent.setType("video/*");
     } else if (image.endsWith("mp3")) {
       sendIntent.setType("audio/x-mpeg");
@@ -442,7 +442,8 @@ public class SocialSharing extends CordovaPlugin {
       String filename = getFileName(image);
       localImage = "file://" + dir + "/" + filename;
       if (image.startsWith("http")) {
-        // filename optimisation taken from https://github.com/EddyVerbruggen/SocialSharing-PhoneGap-Plugin/pull/56
+        // filename optimisation taken from
+        // https://github.com/EddyVerbruggen/SocialSharing-PhoneGap-Plugin/pull/56
         URLConnection connection = new URL(image).openConnection();
         String disposition = connection.getHeaderField("Content-Disposition");
         if (disposition != null) {
@@ -451,7 +452,8 @@ public class SocialSharing extends CordovaPlugin {
           if (matcher.find()) {
             filename = matcher.group(1).replaceAll("[^a-zA-Z0-9._-]", "");
             if (filename.length() == 0) {
-              // in this case we can't determine a filetype so some targets (gmail) may not render it correctly
+              // in this case we can't determine a filetype so some targets (gmail) may not
+              // render it correctly
               filename = "file";
             }
             localImage = "file://" + dir + "/" + filename;
@@ -469,7 +471,8 @@ public class SocialSharing extends CordovaPlugin {
       }
       // image looks like this: data:image/png;base64,R0lGODlhDAA...
       final String encodedImg = image.substring(image.indexOf(";base64,") + 8);
-      // correct the intent type if anything else was passed, like a pdf: data:application/pdf;base64,..
+      // correct the intent type if anything else was passed, like a pdf:
+      // data:application/pdf;base64,..
       if (!image.contains("data:image/")) {
         sendIntent.setType(image.substring(image.indexOf("data:") + 5, image.indexOf(";base64")));
       }
@@ -491,7 +494,7 @@ public class SocialSharing extends CordovaPlugin {
         sendIntent.setType("text/plain");
         return null;
       }
-      // format looks like this :  df:filename.txt;data:image/png;base64,R0lGODlhDAA...
+      // format looks like this : df:filename.txt;data:image/png;base64,R0lGODlhDAA...
       final String fileName = image.substring(image.indexOf("df:") + 3, image.indexOf(";data:"));
       final String fileType = image.substring(image.indexOf(";data:") + 6, image.indexOf(";base64,"));
       final String encodedImg = image.substring(image.indexOf(";base64,") + 8);
@@ -501,9 +504,9 @@ public class SocialSharing extends CordovaPlugin {
     } else if (!image.startsWith("file://")) {
       throw new IllegalArgumentException("URL_NOT_SUPPORTED");
     } else {
-      //get file MIME type
+      // get file MIME type
       String type = getMIMEType(image);
-      //set intent data and Type
+      // set intent data and Type
       sendIntent.setType(type);
     }
     return Uri.parse(localImage);
@@ -515,83 +518,85 @@ public class SocialSharing extends CordovaPlugin {
     if (dotIndex == -1) {
       return type;
     }
-    final String end = fileName.substring(dotIndex+1, fileName.length()).toLowerCase();
+    final String end = fileName.substring(dotIndex + 1, fileName.length()).toLowerCase();
     String fromMap = MIME_Map.get(end);
     return fromMap == null ? type : fromMap;
   }
 
   private static final Map<String, String> MIME_Map = new HashMap<String, String>();
   static {
-    MIME_Map.put("3gp",   "video/3gpp");
-    MIME_Map.put("apk",   "application/vnd.android.package-archive");
-    MIME_Map.put("asf",   "video/x-ms-asf");
-    MIME_Map.put("avi",   "video/x-msvideo");
-    MIME_Map.put("bin",   "application/octet-stream");
-    MIME_Map.put("bmp",   "image/bmp");
-    MIME_Map.put("c",     "text/plain");
+    MIME_Map.put("3gp", "video/3gpp");
+    MIME_Map.put("apk", "application/vnd.android.package-archive");
+    MIME_Map.put("asf", "video/x-ms-asf");
+    MIME_Map.put("avi", "video/x-msvideo");
+    MIME_Map.put("bin", "application/octet-stream");
+    MIME_Map.put("bmp", "image/bmp");
+    MIME_Map.put("c", "text/plain");
     MIME_Map.put("class", "application/octet-stream");
-    MIME_Map.put("conf",  "text/plain");
-    MIME_Map.put("cpp",   "text/plain");
-    MIME_Map.put("doc",   "application/msword");
-    MIME_Map.put("docx",  "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-    MIME_Map.put("xls",   "application/vnd.ms-excel");
-    MIME_Map.put("xlsx",  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-    MIME_Map.put("exe",   "application/octet-stream");
-    MIME_Map.put("gif",   "image/gif");
-    MIME_Map.put("gtar",  "application/x-gtar");
-    MIME_Map.put("gz",    "application/x-gzip");
-    MIME_Map.put("h",     "text/plain");
-    MIME_Map.put("htm",   "text/html");
-    MIME_Map.put("html",  "text/html");
-    MIME_Map.put("jar",   "application/java-archive");
-    MIME_Map.put("java",  "text/plain");
-    MIME_Map.put("jpeg",  "image/jpeg");
-    MIME_Map.put("jpg",   "image/*");
-    MIME_Map.put("js",    "application/x-javascript");
-    MIME_Map.put("log",   "text/plain");
-    MIME_Map.put("m3u",   "audio/x-mpegurl");
-    MIME_Map.put("m4a",   "audio/mp4a-latm");
-    MIME_Map.put("m4b",   "audio/mp4a-latm");
-    MIME_Map.put("m4p",   "audio/mp4a-latm");
-    MIME_Map.put("m4u",   "video/vnd.mpegurl");
-    MIME_Map.put("m4v",   "video/x-m4v");
-    MIME_Map.put("mov",   "video/quicktime");
-    MIME_Map.put("mp2",   "audio/x-mpeg");
-    MIME_Map.put("mp3",   "audio/x-mpeg");
-    MIME_Map.put("mp4",   "video/mp4");
-    MIME_Map.put("mpc",   "application/vnd.mpohun.certificate");
-    MIME_Map.put("mpe",   "video/mpeg");
-    MIME_Map.put("mpeg",  "video/mpeg");
-    MIME_Map.put("mpg",   "video/mpeg");
-    MIME_Map.put("mpg4",  "video/mp4");
-    MIME_Map.put("mpga",  "audio/mpeg");
-    MIME_Map.put("msg",   "application/vnd.ms-outlook");
-    MIME_Map.put("ogg",   "audio/ogg");
-    MIME_Map.put("pdf",   "application/pdf");
-    MIME_Map.put("png",   "image/png");
-    MIME_Map.put("pps",   "application/vnd.ms-powerpoint");
-    MIME_Map.put("ppt",   "application/vnd.ms-powerpoint");
-    MIME_Map.put("pptx",  "application/vnd.openxmlformats-officedocument.presentationml.presentation");
-    MIME_Map.put("prop",  "text/plain");
-    MIME_Map.put("rc",    "text/plain");
-    MIME_Map.put("rmvb",  "audio/x-pn-realaudio");
-    MIME_Map.put("rtf",   "application/rtf");
-    MIME_Map.put("sh",    "text/plain");
-    MIME_Map.put("tar",   "application/x-tar");
-    MIME_Map.put("tgz",   "application/x-compressed");
-    MIME_Map.put("txt",   "text/plain");
-    MIME_Map.put("wav",   "audio/x-wav");
-    MIME_Map.put("wma",   "audio/x-ms-wma");
-    MIME_Map.put("wmv",   "audio/x-ms-wmv");
-    MIME_Map.put("wps",   "application/vnd.ms-works");
-    MIME_Map.put("xml",   "text/plain");
-    MIME_Map.put("z",     "application/x-compress");
-    MIME_Map.put("zip",   "application/x-zip-compressed");
-    MIME_Map.put("",       "*/*");
+    MIME_Map.put("conf", "text/plain");
+    MIME_Map.put("cpp", "text/plain");
+    MIME_Map.put("doc", "application/msword");
+    MIME_Map.put("docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+    MIME_Map.put("xls", "application/vnd.ms-excel");
+    MIME_Map.put("xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    MIME_Map.put("exe", "application/octet-stream");
+    MIME_Map.put("gif", "image/gif");
+    MIME_Map.put("gtar", "application/x-gtar");
+    MIME_Map.put("gz", "application/x-gzip");
+    MIME_Map.put("h", "text/plain");
+    MIME_Map.put("htm", "text/html");
+    MIME_Map.put("html", "text/html");
+    MIME_Map.put("jar", "application/java-archive");
+    MIME_Map.put("java", "text/plain");
+    MIME_Map.put("jpeg", "image/jpeg");
+    MIME_Map.put("jpg", "image/*");
+    MIME_Map.put("js", "application/x-javascript");
+    MIME_Map.put("log", "text/plain");
+    MIME_Map.put("m3u", "audio/x-mpegurl");
+    MIME_Map.put("m4a", "audio/mp4a-latm");
+    MIME_Map.put("m4b", "audio/mp4a-latm");
+    MIME_Map.put("m4p", "audio/mp4a-latm");
+    MIME_Map.put("m4u", "video/vnd.mpegurl");
+    MIME_Map.put("m4v", "video/x-m4v");
+    MIME_Map.put("mov", "video/quicktime");
+    MIME_Map.put("mp2", "audio/x-mpeg");
+    MIME_Map.put("mp3", "audio/x-mpeg");
+    MIME_Map.put("mp4", "video/mp4");
+    MIME_Map.put("mpc", "application/vnd.mpohun.certificate");
+    MIME_Map.put("mpe", "video/mpeg");
+    MIME_Map.put("mpeg", "video/mpeg");
+    MIME_Map.put("mpg", "video/mpeg");
+    MIME_Map.put("mpg4", "video/mp4");
+    MIME_Map.put("mpga", "audio/mpeg");
+    MIME_Map.put("msg", "application/vnd.ms-outlook");
+    MIME_Map.put("ogg", "audio/ogg");
+    MIME_Map.put("pdf", "application/pdf");
+    MIME_Map.put("png", "image/png");
+    MIME_Map.put("pps", "application/vnd.ms-powerpoint");
+    MIME_Map.put("ppt", "application/vnd.ms-powerpoint");
+    MIME_Map.put("pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation");
+    MIME_Map.put("prop", "text/plain");
+    MIME_Map.put("rc", "text/plain");
+    MIME_Map.put("rmvb", "audio/x-pn-realaudio");
+    MIME_Map.put("rtf", "application/rtf");
+    MIME_Map.put("sh", "text/plain");
+    MIME_Map.put("tar", "application/x-tar");
+    MIME_Map.put("tgz", "application/x-compressed");
+    MIME_Map.put("txt", "text/plain");
+    MIME_Map.put("wav", "audio/x-wav");
+    MIME_Map.put("wma", "audio/x-ms-wma");
+    MIME_Map.put("wmv", "audio/x-ms-wmv");
+    MIME_Map.put("wps", "application/vnd.ms-works");
+    MIME_Map.put("xml", "text/plain");
+    MIME_Map.put("z", "application/x-compress");
+    MIME_Map.put("zip", "application/x-zip-compressed");
+    MIME_Map.put("", "*/*");
   }
 
-  // sending files is not supported with ACTION_VIEW, and with ACTION_SEND the message doesn't get prefilled :(
-  private boolean shareViaWhatsAppDirectly(final CallbackContext callbackContext, String message, final String subject, final JSONArray files, final String url, final String number) {
+  // sending files is not supported with ACTION_VIEW, and with ACTION_SEND the
+  // message doesn't get prefilled :(
+  private boolean shareViaWhatsAppDirectly(final CallbackContext callbackContext, String message, final String subject,
+      final JSONArray files, final String url, final String number) {
     // add the URL to the message, as there seems to be no separate field
     if (notEmpty(url)) {
       if (notEmpty(message)) {
@@ -606,8 +611,10 @@ public class SocialSharing extends CordovaPlugin {
       public void run() {
         final Intent intent = new Intent(Intent.ACTION_VIEW);
         try {
-          intent.setData(Uri.parse("https://api.whatsapp.com/send?phone=" + number + "&text=" + URLEncoder.encode(shareMessage, "UTF-8")));
-          // this was added to start the intent in a new window as suggested in #300 to prevent crashes upon return
+          intent.setData(Uri.parse(
+              "https://api.whatsapp.com/send?phone=" + number + "&text=" + URLEncoder.encode(shareMessage, "UTF-8")));
+          // this was added to start the intent in a new window as suggested in #300 to
+          // prevent crashes upon return
           // update: didn't help (doesn't seem to hurt either though)
           intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
@@ -632,9 +639,9 @@ public class SocialSharing extends CordovaPlugin {
   private boolean invokeSMSIntent(final CallbackContext callbackContext, JSONObject options, String p_phonenumbers) {
     final String message = options.optString("message");
     // TODO test this on a real SMS enabled device before releasing it
-//    final String subject = options.optString("subject");
-//    final String image = options.optString("image");
-    final String subject = null; //options.optString("subject");
+    // final String subject = options.optString("subject");
+    // final String image = options.optString("image");
+    final String subject = null; // options.optString("subject");
     final String image = null; // options.optString("image");
     final String phonenumbers = getPhoneNumbersWithManufacturerSpecificSeparators(p_phonenumbers);
     final SocialSharing plugin = this;
@@ -644,7 +651,8 @@ public class SocialSharing extends CordovaPlugin {
 
         if (Build.VERSION.SDK_INT >= 19) { // Build.VERSION_CODES.KITKAT) {
           // passing in no phonenumbers for kitkat may result in an error,
-          // but it may also work for some devices, so documentation will need to cover this case
+          // but it may also work for some devices, so documentation will need to cover
+          // this case
           intent = new Intent(Intent.ACTION_SENDTO);
           intent.setData(Uri.parse("smsto:" + (notEmpty(phonenumbers) ? phonenumbers : "")));
         } else {
@@ -664,7 +672,8 @@ public class SocialSharing extends CordovaPlugin {
               intent.putExtra(Intent.EXTRA_STREAM, fileUri);
             }
           }
-          // this was added to start the intent in a new window as suggested in #300 to prevent crashes upon return
+          // this was added to start the intent in a new window as suggested in #300 to
+          // prevent crashes upon return
           intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
           cordova.startActivityForResult(plugin, intent, 0);
@@ -689,7 +698,8 @@ public class SocialSharing extends CordovaPlugin {
     return null;
   }
 
-  private ActivityInfo getActivity(final CallbackContext callbackContext, final Intent shareIntent, final String appPackageName, final String appName) {
+  private ActivityInfo getActivity(final CallbackContext callbackContext, final Intent shareIntent,
+      final String appPackageName, final String appName) {
     final PackageManager pm = webView.getContext().getPackageManager();
     List<ResolveInfo> activityList = pm.queryIntentActivities(shareIntent, 0);
     for (final ResolveInfo app : activityList) {
@@ -717,25 +727,37 @@ public class SocialSharing extends CordovaPlugin {
     super.onActivityResult(requestCode, resultCode, intent);
     if (_callbackContext != null) {
       switch (requestCode) {
-        case ACTIVITY_CODE_SEND__BOOLRESULT:
-          _callbackContext.sendPluginResult(new PluginResult(
-              PluginResult.Status.OK,
-              resultCode == Activity.RESULT_OK));
-          break;
-        case ACTIVITY_CODE_SEND__OBJECT:
-          JSONObject json = new JSONObject();
-          try {
-            json.put("completed", resultCode == Activity.RESULT_OK);
-            json.put("app", (ShareChooserPendingIntent.chosenComponent != null ? ShareChooserPendingIntent.chosenComponent : "")); // we need a completely different approach if we want to support this on Android. Idea: https://clickclickclack.wordpress.com/2012/01/03/intercepting-androids-action_send-intents/
-            _callbackContext.sendPluginResult(new PluginResult(
-                PluginResult.Status.OK,
-                json));
-          } catch (JSONException e) {
-            _callbackContext.error(e.getMessage());
-          }
-          break;
-        default:
-          _callbackContext.success();
+      case ACTIVITY_CODE_SEND__BOOLRESULT:
+        _callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, resultCode == Activity.RESULT_OK));
+        break;
+      case ACTIVITY_CODE_SEND__OBJECT:
+        JSONObject json = new JSONObject();
+        try {
+          json.put("completed", resultCode == Activity.RESULT_OK);
+          json.put("app",
+              (ShareChooserPendingIntent.chosenComponent != null ? ShareChooserPendingIntent.chosenComponent : "")); // we
+                                                                                                                     // need
+                                                                                                                     // a
+                                                                                                                     // completely
+                                                                                                                     // different
+                                                                                                                     // approach
+                                                                                                                     // if
+                                                                                                                     // we
+                                                                                                                     // want
+                                                                                                                     // to
+                                                                                                                     // support
+                                                                                                                     // this
+                                                                                                                     // on
+                                                                                                                     // Android.
+                                                                                                                     // Idea:
+                                                                                                                     // https://clickclickclack.wordpress.com/2012/01/03/intercepting-androids-action_send-intents/
+          _callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, json));
+        } catch (JSONException e) {
+          _callbackContext.error(e.getMessage());
+        }
+        break;
+      default:
+        _callbackContext.success();
       }
     }
   }
@@ -753,7 +775,7 @@ public class SocialSharing extends CordovaPlugin {
 
   private static String getFileName(String url) {
     if (url.endsWith("/")) {
-      url = url.substring(0, url.length()-1);
+      url = url.substring(0, url.length() - 1);
     }
     final String pattern = ".*/([^?#]+)?";
     Pattern r = Pattern.compile(pattern);
@@ -785,22 +807,21 @@ public class SocialSharing extends CordovaPlugin {
   }
 
   /**
-   * As file.deleteOnExit does not work on Android, we need to delete files manually.
-   * Deleting them in onActivityResult is not a good idea, because for example a base64 encoded file
-   * will not be available for upload to Facebook (it's deleted before it's uploaded).
-   * So the best approach is deleting old files when saving (sharing) a new one.
+   * As file.deleteOnExit does not work on Android, we need to delete files
+   * manually. Deleting them in onActivityResult is not a good idea, because for
+   * example a base64 encoded file will not be available for upload to Facebook
+   * (it's deleted before it's uploaded). So the best approach is deleting old
+   * files when saving (sharing) a new one.
    */
   private void cleanupOldFiles(File dir) {
     for (File f : dir.listFiles()) {
-      //noinspection ResultOfMethodCallIgnored
+      // noinspection ResultOfMethodCallIgnored
       f.delete();
     }
   }
 
   private static boolean notEmpty(String what) {
-    return what != null &&
-        !"".equals(what) &&
-        !"null".equalsIgnoreCase(what);
+    return what != null && !"".equals(what) && !"null".equalsIgnoreCase(what);
   }
 
   private static String[] toStringArray(JSONArray jsonArray) throws JSONException {
