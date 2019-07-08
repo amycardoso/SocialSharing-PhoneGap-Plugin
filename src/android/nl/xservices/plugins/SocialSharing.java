@@ -372,7 +372,7 @@ public class SocialSharing extends CordovaPlugin {
             // as an experiment for #300 we're explicitly running it on the ui thread here
             cordova.getActivity().runOnUiThread(new Runnable() {
               public void run() {
-                Intent chooseIntent;
+                Intent chooseIntent = findTwitterClient();
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
                   // Intent.createChooser's third param was only added in SDK version 22.
                   chooseIntent = Intent.createChooser(sendIntent, chooserTitle, pendingIntent.getIntentSender());
@@ -388,6 +388,30 @@ public class SocialSharing extends CordovaPlugin {
     });
     return true;
   }
+  
+  public Intent findTwitterClient() {
+    final String[] twitterApps = {
+            // package // name - nb installs (thousands)
+            "com.google.android.apps.docs", // official - 10 000
+            "com.google.android.gm" }; // TweetDeck - 5 000 };
+    Intent tweetIntent = new Intent();
+    tweetIntent.setType("text/plain");
+    final PackageManager packageManager = getPackageManager();
+    List<ResolveInfo> list = packageManager.queryIntentActivities(
+            tweetIntent, PackageManager.MATCH_DEFAULT_ONLY);
+
+    for (int i = 0; i < twitterApps.length; i++) {
+        for (ResolveInfo resolveInfo : list) {
+            String p = resolveInfo.activityInfo.packageName;
+            if (p != null && p.startsWith(twitterApps[i])) {
+                tweetIntent.setPackage(p);
+                return tweetIntent;
+            }
+        }
+    }
+
+    return null;
+}
 
   @SuppressLint("NewApi")
   private void copyHintToClipboard(String msg, String label) {
