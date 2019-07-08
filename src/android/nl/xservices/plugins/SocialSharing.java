@@ -376,20 +376,17 @@ public class SocialSharing extends CordovaPlugin {
             cordova.getActivity().runOnUiThread(new Runnable() {
               public void run() {
                 List<Intent> targets = new ArrayList<>();
-                Intent template = new Intent(Intent.ACTION_SEND_MULTIPLE);
-                List<ResolveInfo> candidates = cordova.getActivity().getPackageManager().queryIntentActivities(template, 0);
                 // remove facebook which has a broken share intent
+                List<ResolveInfo> candidates = cordova.getActivity().getPackageManager().
+            queryIntentActivities(sendIntent, 0);
                 for (ResolveInfo candidate : candidates) {
                   String packageName = candidate.activityInfo.packageName;
-                  if (!packageName.equals("com.facebook.katana") || !packageName.equals("com.whatsapp")
-                      || !packageName.equals("org.telegram.messenger")) {
-                    Intent target = new Intent(Intent.ACTION_SEND_MULTIPLE);
+                  if (!packageName.equals("com.facebook.katana")) {
                     target.setPackage(packageName);
-                    targets.add(target);
+                    targets.add(sendIntent);
                   }
                 }
-                Intent send = Intent.createChooser(targets.remove(0), chooserTitle);
-                mycordova.startActivityForResult(plugin, send,
+                mycordova.startActivityForResult(plugin, Intent.createChooser(targets.remove(0), chooserTitle),
                     boolResult ? ACTIVITY_CODE_SEND__BOOLRESULT : ACTIVITY_CODE_SEND__OBJECT);
               }
             });
