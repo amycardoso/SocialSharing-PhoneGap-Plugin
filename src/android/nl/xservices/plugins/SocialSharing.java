@@ -382,7 +382,7 @@ public class SocialSharing extends CordovaPlugin {
                 for (ResolveInfo candidate : candidates) {
                   String packageName = candidate.activityInfo.packageName;
                   if (!packageName.equals("com.facebook.katana")) {
-                    target.setPackage(packageName);
+                    sendIntent.setPackage(packageName);
                     targets.add(sendIntent);
                   }
                 }
