@@ -377,7 +377,7 @@ public class SocialSharing extends CordovaPlugin {
               public void run() {
                 List<Intent> targets = new ArrayList<>();
                 Intent template = new Intent(Intent.ACTION_SEND_MULTIPLE);
-                List<ResolveInfo> candidates = getActivity().getPackageManager().queryIntentActivities(template, 0);
+                List<ResolveInfo> candidates = cordova.getActivity().getPackageManager().queryIntentActivities(template, 0);
                 // remove facebook which has a broken share intent
                 for (ResolveInfo candidate : candidates) {
                   String packageName = candidate.activityInfo.packageName;
