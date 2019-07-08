@@ -400,11 +400,6 @@ public class SocialSharing extends CordovaPlugin {
     return true;
   }
 
-  public Intent findTwitterClient() {
-
-    return targets;
-  }
-
   @SuppressLint("NewApi")
   private void copyHintToClipboard(String msg, String label) {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
