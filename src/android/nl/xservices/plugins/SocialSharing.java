@@ -396,7 +396,7 @@ public class SocialSharing extends CordovaPlugin {
             "com.google.android.gm" }; // TweetDeck - 5 000 };
     Intent tweetIntent = new Intent();
     tweetIntent.setType("text/plain");
-    final PackageManager packageManager = getPackageManager();
+    final PackageManager packageManager = getActivity().getPackageManager();
     List<ResolveInfo> list = packageManager.queryIntentActivities(
             tweetIntent, PackageManager.MATCH_DEFAULT_ONLY);
 
