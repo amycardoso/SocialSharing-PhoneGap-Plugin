@@ -386,15 +386,14 @@ public class SocialSharing extends CordovaPlugin {
   
   public Intent findTwitterClient() {
     final String[] twitterApps = {
-            // package // name - nb installs (thousands)
-            "com.google.android.apps.docs", // official - 10 000
-            "com.google.android.gm" }; // TweetDeck - 5 000 };
+            "com.google.android.gm",
+            "com.google.android.apps.docs",
+            "com.whatsapp"};
     Intent tweetIntent = new Intent();
     tweetIntent.setType("text/plain");
     final PackageManager packageManager = cordova.getActivity().getPackageManager();
     List<ResolveInfo> list = cordova.getActivity().getPackageManager().queryIntentActivities(
             tweetIntent, PackageManager.MATCH_DEFAULT_ONLY);
-
     for (int i = 0; i < twitterApps.length; i++) {
         for (ResolveInfo resolveInfo : list) {
             String p = resolveInfo.activityInfo.packageName;
