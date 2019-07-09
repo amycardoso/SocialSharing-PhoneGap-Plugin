@@ -381,33 +381,34 @@ public class SocialSharing extends CordovaPlugin {
                         // as an experiment for #300 we're explicitly running it on the ui thread here
                         cordova.getActivity().runOnUiThread(new Runnable() {
                             public void run() {
-
-                                List<Intent> targetShareIntents = new ArrayList<Intent>();
-                                List<ResolveInfo> resInfos = cordova.getPackageManager()
+                                List<ResolveInfo> resolveInfoList = cordova.getActivity().getPackageManager()
                                         .queryIntentActivities(sendIntent, 0);
-                                if (!resInfos.isEmpty()) {
-                                    System.out.println("Have package");
-                                    for (ResolveInfo resInfo : resInfos) {
-                                        String packageName = resInfo.activityInfo.packageName;
-                                        Log.i("Package Name", packageName);
-                                        if (packageName.contains("com.twitter.android")
-                                                || packageName.contains("com.facebook.katana")
-                                                || packageName.contains("com.kakao.story")) {
-                                            Intent intent = sendIntent;
-                                            intent.setComponent(
-                                                    new ComponentName(packageName, resInfo.activityInfo.name));
-                                            intent.setPackage(packageName);
-                                            targetShareIntents.add(intent);
-                                        }
+
+                                List<LabeledIntent> intentList = new ArrayList<LabeledIntent>();
+
+                                for (int j = 0; j < resolveInfoList.size(); j++) {
+                                    ResolveInfo resolveInfo = resolveInfoList.get(j);
+                                    String packageName = resolveInfo.activityInfo.packageName;
+                                    sendIntent.setComponent(
+                                            new ComponentName(packageName, resolveInfo.activityInfo.name));
+
+                                    if (packageName.contains("android.email") || packageName.contains("android.gm")) {
+                                        intentList.add(new LabeledIntent(sendIntent, packageName,
+                                                resolveInfo.loadLabel(cordova.getActivity().getPackageManager()),
+                                                resolveInfo.icon));
                                     }
-                                    Intent chooserIntent = Intent.createChooser(targetShareIntents.remove(0),
-                                            chooserTitle);
-                                    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS,
-                                            targetShareIntents.toArray(new Parcelable[] {}));
-                                    startActivity(chooserIntent);
                                 }
+                                Intent appLists = Intent.createChooser(intentList.remove(intentList.size() - 1),
+                                        chooserTitle);
+                                appLists.putExtra(Intent.EXTRA_INITIAL_INTENTS,
+                                        intentList.toArray(new LabeledIntent[intentList.size()]));
+                                mycordova.startActivityForResult(plugin, appLists,
+                                        boolResult ? ACTIVITY_CODE_SEND__BOOLRESULT : ACTIVITY_CODE_SEND__OBJECT);
+
                             }
+
                         });
+
                     }
                 }
 
