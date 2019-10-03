@@ -392,7 +392,8 @@ public class SocialSharing extends CordovaPlugin {
                                     sendIntent.setComponent(
                                             new ComponentName(packageName, resolveInfo.activityInfo.name));
 
-                                    if (!packageName.contains("com.whatsapp") && !packageName.contains("org.telegram.messenger") && !packageName.contains("com.facebook") && !packageName.contains("com.instagram.android")) {
+                                    if (!packageName.contains("com.whatsapp") && !packageName.contains("org.telegram.messenger") && !packageName.contains("com.facebook") && !packageName.contains("com.instagram.android") 
+                                        && !packageName.contains("com.google.android.gm") && !packageName.contains("com.microsoft.office.outlook") && !packageName.contains("com.appple.app.email") && !packageName.contains("com.samsung.android.email.provider")) {
                                         intentList.add(new LabeledIntent(sendIntent, packageName,
                                                 resolveInfo.loadLabel(cordova.getActivity().getPackageManager()),
                                                 resolveInfo.icon));
